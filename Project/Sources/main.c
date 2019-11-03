@@ -6,17 +6,29 @@
 
 
 void main(void) {
-  /* put your own code here */
   
-
-
+ // initialize
+ 
 	EnableInterrupts;
 
  asm_main(); /* call the assembly function */
 
 
   for(;;) {
-    _FEED_COP(); /* feeds the dog */
+    
+    //check numpad
+    
+    //show numebrs on seven segment
+    
+    //if 4 numbers entered 
+    //check to see if match
+    //if works
+    //LED -> green
+    //else
+    //Buzzer + LED -> RED
+    //if 3 attemps -> ALL LEDS RED
+    
+    
   } /* loop forever */
   /* please make sure that you never leave main */
 }
