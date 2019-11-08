@@ -30,3 +30,11 @@ asm_main:
             NOP                   ; Insert here your own code
 
             RTS                   ; return to caller
+            
+delay1ms:
+         LDX #8000
+         
+   loop: nop
+         nop
+         nop
+         dbne x,loop         

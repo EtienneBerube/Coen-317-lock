@@ -7,6 +7,8 @@
 
 void asm_main(void);
   /* interface to my assembly main function */
+  
+void delay1ms(void);
 
 #ifdef __cplusplus
     }
