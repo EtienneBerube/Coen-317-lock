@@ -12,6 +12,7 @@
             ; we use export 'Entry' as symbol. This allows us to
             ; reference 'Entry' either in the linker .prm file
             ; or from C/C++ later on
+            XDEF delay1ms
 
 ; Include derivative-specific definitions 
 		INCLUDE 'derivative.inc'  		
