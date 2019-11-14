@@ -1,16 +1,21 @@
 #include <hidef.h>      /* common defines and macros */
 #include "derivative.h"      /* derivative-specific definitions */
-
 #include "main_asm.h" /* interface to the assembly module */
-
+#include <math.h> /* for mathematical computations */
+//Function Declarations
+int checkNumpad();
+void showValues();
+void lightUpLED(int[], int);
+void showValues(int[],int);
 
 int checkNumpad(){
   //Define values for keypad
-  uint8_t keycodes[4][4];
-  keycodes[0]={1,2,3,10}
-  keycodes[1]={4,5,6,11}
-  keycodes[2]={7,8,9,12}
-  keycodes[3]={-1,0,-1,13}
+  uint8_t keycodes[4][4] = {  
+  {1,2,3,10},
+  {4,5,6,11},
+  {7,8,9,12},
+  {-1,0,-1,13}
+  };
   
   int toReturn = -1;
 
@@ -69,7 +74,7 @@ void main(void) {
       
         if(value != -1){
           input[pointer++] = value
-          //disbale numpad for aproximately 20ms (debouncing)
+          //disable numpad for aproximately 20ms (debouncing)
           counter = 8000;
         }
     }else{
@@ -81,7 +86,7 @@ void main(void) {
     showValues(input, pointer);
     
     //Check if matches
-    
+    lightUpLED(input, 6969);
     //if 4 numbers entered 
     //check to see if match
     //if works
@@ -94,3 +99,33 @@ void main(void) {
   } /* loop forever */
   /* please make sure that you never leave main */
 }
+
+/* Function which checks whether the number inputted in the numpad is correct
+   IF the number is correct, it loads 01 into the register A
+   If the number is incorrect, it loads 00, 
+   The asm function will then light up the RGB LED with the correct colour
+*/
+void lightUpLED(int result[4], int correctPasscode){
+int numberEntered = 0;
+
+  for (int i = 3; i >= 0; i--){
+    numberEntered += result[i] * power(10,i); 
+   }
+
+  if (numberEntered == correctPasscode) {
+    //Light yp LED Green= 010
+    asm("ldaa #$01");
+  } else {
+    //Light up LED RED
+    asm("ldaa #$00");
+  }
+
+}
+
+
+
+
+
+
+
+

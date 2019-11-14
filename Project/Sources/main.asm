@@ -28,9 +28,19 @@ MyCode:     SECTION
 asm_main:
             MOVB   #1,temp_byte   ; just some demonstration code
             NOP                   ; Insert here your own code
-
-            RTS                   ; return to caller
+   
+    ; CODE FOR THE RGB LED        
+            MOVB $00, DDRM        ; Set the port to output
+            MOVB $00, PTM         ; Allow for the RBG LED
+            CMPA #$00             ; check if A has 0
+            beq loadRed           ; Proceed to making the RGB LED red if a != 0
+            movb $40, PTP         ; else make the RGB LED green
             
+            RTS                   ; return to caller
+
+loadRed:    MOVb $10, PTP            ; macro to load Red in the LED   
+            RTS   
+                  
 delay1ms:
          LDX #8000
          
