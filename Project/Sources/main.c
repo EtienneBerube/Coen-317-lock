@@ -18,7 +18,7 @@ void showValues();
 void lightUpLED(int[], int);
 void showValues(int[],int);
 interrupt void oc5ISR(void){
-  TC5 = TC5 + CYCLES
+  TC5 = TC5 + CYCLES;
 }
 void setupBradsSpecialFancySuperDeluxSaucyDelayWhosFunctionNameWillNeedToBeChangedSoon(void){
     //Make the timer using the output compare method demonstrated in the slides
@@ -32,7 +32,6 @@ void setupBradsSpecialFancySuperDeluxSaucyDelayWhosFunctionNameWillNeedToBeChang
     while (TFLG1&0x20 != 0x20); //Wait for succesful comparison
     TCTL1 = 0x04;
     //TC5 = TC5 + HCYCLES;
-    HiLoFlag = 0;
     TIE = 0x20; //Enable OC5 interrupt
     asm("cli"); //Global Enable
 
@@ -47,12 +46,7 @@ void setupBradsSpecialFancySuperDeluxSaucyDelayWhosFunctionNameWillNeedToBeChang
 }
 int checkNumpad(){
   //Define values for keypad
-  uint8_t keycodes[4][4] = {  
-  {1,2,3,10},
-  {4,5,6,11},
-  {7,8,9,12},
-  {-1,0,-1,13}
-  };
+  short keycodes[4][4] = {{1,2,3,10},{4,5,6,11},{7,8,9,12},{-1,0,-1,13}};
   
   int toReturn = -1;
 
@@ -60,8 +54,8 @@ int checkNumpad(){
   int test = 0x08
    
    
-   for(uint8_t i = 0 ; i < 4; i++){
-     test = test << 1 
+   for(short i=0; i < 4; i++){
+     test = test << 1; 
      
      PORTA = test;
      int result = PORTA & 0x0F; // take result
