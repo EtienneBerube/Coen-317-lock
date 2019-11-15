@@ -3,13 +3,12 @@
 #include "main_asm.h" /* interface to the assembly module */
 #include <math.h> /* for mathematical computations */
 
-#define CYCLES 900;
+#define CYCLES 2812500;
 /* Note of how to select cycles
- * Clock = 24MHz / pre-scaler => 24*10^6/64 = 375KHz
- * Period = 2.66uS
+ * Clock = 24MHz / pre-scaler => 24*10^6/128 = 187.5KHz
+ * Period = 5.33uS
  * We want a delay of 15 seconds.
- * Thus we need 
- * 
+ * Thus we need 2,812,500 cycles
  */
 
 
