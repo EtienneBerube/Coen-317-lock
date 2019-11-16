@@ -1,5 +1,5 @@
 *** EVALUATION ***
-PROGRAM "D:\GoogleDrive\School\Concordia\COEN317\Project\gitSpot\newGitSpot\NewProjectAttempt\Project\bin\Project.abs"
+PROGRAM "D:\GoogleDrive\School\Concordia\COEN317\Project\gitSpot\newGitSpot\NewProjectAttempt\Project\bin\Project.absHCS12_Serial_Monitor.abs"
 
 *********************************************************************************************
 TARGET SECTION
@@ -36,7 +36,7 @@ Section Name                    Size  Type     From       To       Segment
 .startData                        10     R     0xC015     0xC01E   ROM_C000
 NON_BANKED                        12     R     0xC01F     0xC02A   ROM_C000
 .copy                              2     R     0xC02B     0xC02C   ROM_C000
-.text                            434     R   0x308000   0x3081B1   PAGE_30
+.text                            535     R   0x308000   0x308216   PAGE_30
 .stack                           256   R/W     0x1000     0x10FF   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -379,11 +379,11 @@ NON_BANKED                        12     R     0xC01F     0xC02A   ROM_C000
 .abs_section_17e                   2   N/I      0x17E      0x17F   .absSeg338
 .abs_section_2ae                   2   N/I      0x2AE      0x2AF   .absSeg339
 .abs_section_2be                   2   N/I      0x2BE      0x2BF   .absSeg340
-MyCode                            39     R   0x3081B2   0x3081D8   PAGE_30
+MyCode                            46     R   0x308217   0x308244   PAGE_30
 .vectSeg341_vect                   2     R     0xFFFE     0xFFFF   .vectSeg341
 
 Summary of section sizes per section type:
-READ_ONLY (R):         208 (dec:      520)
+READ_ONLY (R):         274 (dec:      628)
 READ_WRITE (R/W):      100 (dec:      256)
 NO_INIT (N/I):         190 (dec:      400)
 
@@ -682,7 +682,7 @@ MODULE:                 -- mc9s12dg256.c.o --
      _CAN4TXDSR7                                2BB       1       1       0   .abs_section_2bb
      _CAN4TXDLR                                 2BC       1       1       0   .abs_section_2bc
      _CAN4TXTBPR                                2BD       1       1       0   .abs_section_2bd
-     _PORTAB                                      0       2       2       3   .abs_section_0
+     _PORTAB                                      0       2       2       4   .abs_section_0
      _DDRAB                                       2       2       2       2   .abs_section_2
      _PARTID                                     1A       2       2       0   .abs_section_1a
      _TCNT                                       44       2       2       0   .abs_section_44
@@ -743,21 +743,21 @@ MODULE:                 -- mc9s12dg256.c.o --
      _CAN4TXTSR                                 2BE       2       2       0   .abs_section_2be
 MODULE:                 -- main.c.o --
 - PROCEDURES:
-     lightUpLED                              308000      1A      26       2   .text       
-     checkNumpad                             30801A      91     145       2   .text       
-     showValues                              3080AB      86     134       2   .text       
-     main                                    308131      58      88       2   .text       
+     lightUpLED                              308000      47      71       4   .text       
+     checkNumpad                             308047      91     145       2   .text       
+     showValues                              3080D8      86     134       2   .text       
+     main                                    30815E      90     144       2   .text       
 - VARIABLES:
 MODULE:                 -- main.asm.o --
 - PROCEDURES:
-     rgb_light                               3081B2      17      23       0   MyCode      
-     loadRed                                 3081C9       7       7       0   MyCode      
-     delay1ms                                3081D0       3       3       2   MyCode      
-     loop                                    3081D3       6       6       0   MyCode      
+     rgb_light                               308217      1E      30       2   MyCode      
+     loadRed                                 308235       7       7       0   MyCode      
+     delay1ms                                30823C       3       3       2   MyCode      
+     loop                                    30823F       6       6       0   MyCode      
 - VARIABLES:
 MODULE:                 -- Start12.c.o --
 - PROCEDURES:
-     Init                                    308189      29      41       2   .text       
+     Init                                    3081EE      29      41       2   .text       
      _Startup                                  C000      15      21       0   .init       
 - VARIABLES:
      _startupData                              C015       6       6       3   .startData  
@@ -773,8 +773,8 @@ MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
   mc9s12dg256.c.o                            400      0      0
-  main.c.o                                     0    393      0
-  main.asm.o                                   0     39      0
+  main.c.o                                     0    494      0
+  main.asm.o                                   0     46      0
   Start12.c.o                                  0     62      0
   rtshc12.c.o (ansibi.lib)                     0     12      0
   other                                      256     12      2
@@ -1477,7 +1477,7 @@ SECTION: "MyCode"
 OBJECT LIST SORTED BY ADDRESS
      Name                                      Addr   hSize   dSize     Ref    Section   RLIB
 ---------------------------------------------------------------------------------------------
-     _PORTAB                                      0       2       2       3   .abs_section_0
+     _PORTAB                                      0       2       2       4   .abs_section_0
      _DDRAB                                       2       2       2       2   .abs_section_2
      _PORTE                                       8       1       1       0   .abs_section_8
      _DDRE                                        9       1       1       0   .abs_section_9
@@ -1820,15 +1820,15 @@ OBJECT LIST SORTED BY ADDRESS
      _CAN4TXTSR                                 2BE       2       2       0   .abs_section_2be
      _Startup                                  C000      15      21       0   .init       
      _ISHRS                                    C01F       C      12       1   NON_BANKED  
-     lightUpLED                              308000      1A      26       2   .text       
-     checkNumpad                             30801A      91     145       2   .text       
-     showValues                              3080AB      86     134       2   .text       
-     main                                    308131      58      88       2   .text       
-     Init                                    308189      29      41       2   .text       
-     rgb_light                               3081B2      17      23       0   MyCode      
-     loadRed                                 3081C9       7       7       0   MyCode      
-     delay1ms                                3081D0       3       3       2   MyCode      
-     loop                                    3081D3       6       6       0   MyCode      
+     lightUpLED                              308000      47      71       4   .text       
+     checkNumpad                             308047      91     145       2   .text       
+     showValues                              3080D8      86     134       2   .text       
+     main                                    30815E      90     144       2   .text       
+     Init                                    3081EE      29      41       2   .text       
+     rgb_light                               308217      1E      30       2   MyCode      
+     loadRed                                 308235       7       7       0   MyCode      
+     delay1ms                                30823C       3       3       2   MyCode      
+     loop                                    30823F       6       6       0   MyCode      
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
@@ -1862,9 +1862,11 @@ Filling bytes inserted
 OBJECT-DEPENDENCIES SECTION
 ---------------------------------------------------------------------------------------------
 _Startup                  USES __SEG_END_SSTACK Init main 
+lightUpLED                USES rgb_light 
 checkNumpad               USES _PORTAB _ISHRS 
 showValues                USES _PTP _PORTAB delay1ms 
-main                      USES _DDRAB _DDRP checkNumpad showValues lightUpLED 
+main                      USES _DDRAB _DDRP _PORTAB lightUpLED checkNumpad 
+                                showValues 
 Init                      USES _startupData 
 
 *********************************************************************************************
@@ -1874,16 +1876,18 @@ DEPENDENCY TREE
  | 
  +- main                
  |  | 
+ |  +- lightUpLED          
+ |  |  | 
+ |  |  +- rgb_light           
+ |  |       
  |  +- checkNumpad         
  |  |  | 
  |  |  +- _ISHRS              
  |  |       
  |  +- showValues          
- |  |  | 
- |  |  +- delay1ms            
- |  |       
- |  +- lightUpLED          
- |       
+ |     | 
+ |     +- delay1ms            
+ |          
  +- _Startup            
     | 
     +- Init                
@@ -1897,5 +1901,5 @@ STATISTIC SECTION
 ExeFile:
 --------
 Number of blocks to be downloaded: 6
-Total size of all blocks to be downloaded: 520
+Total size of all blocks to be downloaded: 628
 
