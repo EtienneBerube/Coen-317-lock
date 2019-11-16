@@ -17,6 +17,7 @@ int checkNumpad();
 void showValues();
 void lightUpLED(int[], int);
 void showValues(int[],int);
+
 interrupt void oc5ISR(void){
   TC5 = TC5 + CYCLES;
 }
@@ -29,7 +30,7 @@ void setupBradsSpecialFancySuperDeluxSaucyDelayWhosFunctionNameWillNeedToBeChang
     TSCR1 = 0x90; //Enable the timer;
     TFLG1 = 0xFF; //clear all CnF flags
     TC5 = TCNT + 10; //TODO: verify cycle count here to change delay? maybe can just use this instead of ISR? If so, use same math as for cycles define but add math to define it in seconds
-    while (TFLG1&0x20 != 0x20); //Wait for succesful comparison
+    while (TFLG1&0x20 != 0x20); //Wait for successful comparison
     TCTL1 = 0x04;
     //TC5 = TC5 + HCYCLES;
     TIE = 0x20; //Enable OC5 interrupt
@@ -51,7 +52,7 @@ int checkNumpad(){
   int toReturn = -1;
 
   int counter = 0;
-  int test = 0x08
+  int test = 0x08;
    
    
    for(short i=0; i < 4; i++){
@@ -69,7 +70,7 @@ int checkNumpad(){
 
 void showValues(int[4] values, int pointer){
 //0-F on 7-segment display
-  int segment_map[]  = {0x3F, 0x06,0x5B, 0x4F, 0x66,0x6D,0x7D,0x07,0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71};
+  int segment_map[]  = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71};
   
   for(int i = 0; i < pointer; i++){
     if(values[i] != -1){
@@ -104,7 +105,7 @@ void main(void) {
       int value = checkNumpad();
       
         if(value != -1){
-          input[pointer++] = value
+          input[pointer++] = value;
           //disable numpad for aproximately 20ms (debouncing)
           counter = 8000;
         }
