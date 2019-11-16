@@ -8,7 +8,7 @@
 ;**************************************************************
 
 ; export symbols
-            XDEF asm_main
+            XDEF rgb_light
             ; we use export 'Entry' as symbol. This allows us to
             ; reference 'Entry' either in the linker .prm file
             ; or from C/C++ later on
@@ -26,10 +26,8 @@ temp_byte:  DS.B   1
 ; code section
 MyCode:     SECTION
 ; this assembly routine is called by the C/C++ application
-asm_main:
-            MOVB   #1,temp_byte   ; just some demonstration code
-            NOP                   ; Insert here your own code
-   
+
+rgb_light:   
     ; CODE FOR THE RGB LED        
             MOVB $00, DDRM        ; Set the port to output
             MOVB $00, PTM         ; Allow for the RBG LED
