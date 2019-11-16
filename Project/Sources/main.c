@@ -1,9 +1,9 @@
 #include <hidef.h>      /* common defines and macros */
 #include "derivative.h"      /* derivative-specific definitions */
 #include "main_asm.h" /* interface to the assembly module */
-#include <math.h> /* for mathematical computations */
+#include <math.h> /* for mathematical computations */   //TODO: REMOVE Since not using anymore
 
-#define CYCLES 2812500;
+#define CYCLES 2812500
 /* Note of how to select cycles
  * Clock = 24MHz / pre-scaler => 24*10^6/128 = 187.5KHz
  * Period = 5.33uS
@@ -11,14 +11,8 @@
  * Thus we need 2,812,500 cycles
  */
 
-
-//Function Declarations
-int checkNumpad();
-void showValues();
-void lightUpLED(int[], int);
-void showValues(int[],int);
 interrupt void oc5ISR(void){
-  TC5 = TC5 + CYCLES;
+   TC5 = TC5 + CYCLES;
 }
 void setupBradsSpecialFancySuperDeluxSaucyDelayWhosFunctionNameWillNeedToBeChangedSoon(void){
     //Make the timer using the output compare method demonstrated in the slides
@@ -44,6 +38,28 @@ void setupBradsSpecialFancySuperDeluxSaucyDelayWhosFunctionNameWillNeedToBeChang
 
 
 }
+
+void lightUpLED(int result[4], int correctPasscode){
+  int numberEntered = 0;
+  unsigned int i, j;
+  
+  for(i = 3;i >= 0;i--){
+    int exponent = 1;
+    
+      for(j = i ; j>= 0;j--){
+        exponent *= 10;
+      }
+    numberEntered += result[i] * exponent; 
+   }
+
+  if (numberEntered == correctPasscode) {
+    rgb_light(0x01);
+  } else {
+    //Light up LED RED
+    rgb_light(0x00);
+  }
+
+}
 int checkNumpad(){
   //Define values for keypad
   short keycodes[4][4] = {{1,2,3,10},{4,5,6,11},{7,8,9,12},{-1,0,-1,13}};
@@ -51,14 +67,16 @@ int checkNumpad(){
   int toReturn = -1;
 
   int counter = 0;
-  int test = 0x08
+  int test = 0x08;
+  
+  unsigned int i;
+  int result;
    
-   
-   for(short i=0; i < 4; i++){
+  for(i=0; i < 4; i++){
      test = test << 1; 
      
      PORTA = test;
-     int result = PORTA & 0x0F; // take result
+     result = PORTA & 0x0F; // take result
      if(result != 0 && result <= 4){
        toReturn = keycodes[(test >> 4) & 0x0F][result-1]; //Get right spot in array
      }
@@ -67,15 +85,17 @@ int checkNumpad(){
     
 }
 
-void showValues(int[4] values, int pointer){
+void showValues(int values[4], int pointer){
 //0-F on 7-segment display
-  int segment_map[]  = {0x3F, 0x06,0x5B, 0x4F, 0x66,0x6D,0x7D,0x07,0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71};
+  int segment_map[16]  = {0x3F, 0x06,0x5B, 0x4F, 0x66,0x6D,0x7D,0x07,0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71};
   
-  for(int i = 0; i < pointer; i++){
+  unsigned int i;
+  
+  for(i = 0; i < pointer; i++){
     if(values[i] != -1){
      PTP = ~(i+1);
      PORTB = segment_map[values[i]];
-     delay1ms() 
+     delay1ms(); 
     }
   }
 }
@@ -104,7 +124,7 @@ void main(void) {
       int value = checkNumpad();
       
         if(value != -1){
-          input[pointer++] = value
+          input[pointer++] = value;
           //disable numpad for aproximately 20ms (debouncing)
           counter = 8000;
         }
@@ -136,22 +156,7 @@ void main(void) {
    If the number is incorrect, it loads 00, 
    The asm function will then light up the RGB LED with the correct colour
 */
-void lightUpLED(int result[4], int correctPasscode){
-int numberEntered = 0;
 
-  for (int i = 3; i >= 0; i--){
-    numberEntered += result[i] * power(10,i); 
-   }
-
-  if (numberEntered == correctPasscode) {
-    //Light yp LED Green= 010
-    asm("ldaa #$01");
-  } else {
-    //Light up LED RED
-    asm("ldaa #$00");
-  }
-
-}
 
 
 

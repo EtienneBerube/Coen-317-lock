@@ -5,7 +5,7 @@
     extern "C" { /* our assembly functions have C calling convention */
 #endif
 
-void asm_main(void);
+void rgb_light(char);
   /* interface to my assembly main function */
   
 void delay1ms(void);
