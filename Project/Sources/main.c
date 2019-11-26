@@ -3,7 +3,9 @@
 #include "main_asm.h" /* interface to the assembly module */
 #include <math.h> /* for mathematical computations */   //TODO: REMOVE Since not using anymore
 
-#define CYCLES 2812500
+#define CYCLES 15
+unsigned int paov_cnt;
+
 /* Note of how to select cycles
  * Clock = 24MHz / pre-scaler => 24*10^6/128 = 187.5KHz
  * Period = 5.33uS
@@ -12,46 +14,52 @@
  */
 #pragma CODE_SEG NON_BANKED
 interrupt void oc5ISR(void){
-   TC5 = TC5 + CYCLES;
+  //TSCR1 = 0x90;
+  //PAFLG = 0x20;
+  TFLG2 = 0x80;  
+  
+ 
+  paov_cnt = paov_cnt + 1;
+  //if(paov_cnt == 43){
+  //  delayFlag =0;
+  //}
+  
 }
+
 #pragma CODE_SEG DEFAULT /* change code section to DEFAULT (for Small Memory Model, this is $C000) */
- // Interrupt Vector Table   
- typedef void (*near tIsrFunc)(void); // keyword in HCS12 so that the following is in nonbanked (a PPAGE value is not added) memory
-// const tIsrFunc _vect[] @0xFFE4 = { // 0xFFCC is the address to store the PORTH interrupt vector
+
+typedef void (*near tIsrFunc)(void); // keyword in HCS12 so that the following is in nonbanked (a PPAGE value is not added) memory
+ const tIsrFunc _vect[] @0xFFDE = { // 0xFFCC is the address to store the PORTH interrupt vector
     /* Interrupt table */
-//    oc5ISR // OC5 Interrupt
-// };
-void setupBradsSpecialFancySuperDeluxSaucyDelayWhosFunctionNameWillNeedToBeChangedSoon(void){
-    //Make the timer using the output compare method demonstrated in the slides
-    TIOS = 0x20; //Enable input capture
-    TCTL1 = 0x0C; //Select OC5 action: pull high
-    TSCR2 = 0x03;
-    TSCR2 = 0x06; //Set pre-scaler to 64. TODO: Verify what a good value for this would be -> clock cycle = E-cycle/prescaler where E-cycle = 24MHz
-    TSCR1 = 0x90; //Enable the timer;
-    TFLG1 = 0xFF; //clear all CnF flags
-    TC5 = TCNT + 10; //TODO: verify cycle count here to change delay? maybe can just use this instead of ISR? If so, use same math as for cycles define but add math to define it in seconds
-    while (TFLG1&0x20 != 0x20); //Wait for succesful comparison
-    TCTL1 = 0x04;
-    //TC5 = TC5 + HCYCLES;
-    TIE = 0x20; //Enable OC5 interrupt
-    asm("cli"); //Global Enable
+    oc5ISR // OC5 Interrupt
+ };
+ 
+ 
 
+ 
 
-    //other method code (pulse accumulator) k
-    // TIOS = 0x01; //Set channel 0 to output compare;
-    // TCTL1 = 0x0C; //TODO: Verify what this does
-    // TSCR2 = 0x03; //Set pre-scaler to 8. TODO: Verify what a good value for this would be -> clock cycle = E-cycle/prescaler where E-cycle = 24MHz
-    // TSCR1 = 0x90; //Enable the timer;
-
-
+void setupBradsSpecialFancySuperDeluxSaucyDelayWhosFunctionNameWillNeedToBeChangedSoon(){
+  paov_cnt = 0;
+  TCNT = 0;
+  TSCR2 = 0x87;  //prescale factor == 128 & enable TOI(time overflow interrupt bit)
+  TSCR1 = 0x80;  //start timer
+  TFLG1 = 0xFF;  //
+  TIOS = 0x20;
+  asm("cli");
+  
+  while(paov_cnt != 43);
+  TSCR1 = 0x00; //Stop timer
+  TFLG2 = 0x80;
+   
 }
 
-void lightUpLED(int result[4], int correctPasscode){
+int checkCode(int result[4], int correctPasscode){
   int numberEntered = 0;
   int i, j;
+  int exponent;
   
   for(i = 0;i < 4;i++){
-    int exponent = 1;
+    exponent = 1;
     
       for(j = 3-i ; j> 0;j--){
         exponent *= 10;
@@ -60,10 +68,13 @@ void lightUpLED(int result[4], int correctPasscode){
    }
 
   if (numberEntered == correctPasscode) {
-    rgb_light(0x01);
+    // rgb_light(0x01);
+    return 1;
   } else {
     //Light up LED RED
-    rgb_light(0x00);
+    // rgb_light(0x00);
+    //TODO add flashing RGBled
+    return -1;
   }
 
 }
@@ -98,82 +109,152 @@ void showValues(int values[4], int pointer){
   
   unsigned int i;
   
+  PTP = 0x0F;
+  
   for(i = 0; i < pointer; i++){
     if(values[i] != -1){
-     PTP = ~(i+1);
+     PTP = ~(1 << i);
      PORTB = segment_map[values[i]];
      delay1ms(); 
     }
   }
 }
 
+int decodeValue(unsigned char value){
+ int counter;
+    int values[9] = {0x00, 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
+    for (counter = 0; counter < 9; counter ++) {
+        if (value == values[counter]) {
+            return counter;
+        }
+    }
+    // did not get a good value
+    counter = - 1;
+    return counter;
+  
+}
+
+void showNo(){
+ char no[] = {0x54,0x5C};
+ int i, j;
+ 
+ for(j = 0; j < 500; j++){
+  
+    for(i = 0; i < 2; i++){
+        PTP = ~(1 << i);
+        PORTB = no[i];
+        delay1ms(); 
+    }
+  }
+}
+
+void showYes(){
+ char yes[] = {0x6E,0x79,0x6D};
+ int i, j;
+ 
+ for(j = 0; j < 1000; j++){
+  
+    for(i = 0; i < 3; i++){
+        PTP = ~(1 << i);
+        PORTB = yes[i];
+        delay1ms(); 
+    }
+  }
+}
+
 void main(void) {
   
-    
-  int input[4];
+  int badCounter = 0;
+  int values[4] = { -1,-1,-1,-1};
   int pointer = 0;
+  int input[4];
   int temp[4] = {1,2,3,4};
   int counter = 0;
+  int delayIndex = 0;
+  delayFlag = 0;
   
   DDRA = 0xF0; // Port A (Keypad) 0..3 input and 4..7 outputs
   
   DDRB = 0xFF; //Port B (7-Segment) output
   DDRP = 0x0F; //Port P(0..3) (7-segment selection) output
+  DDRA = 0x00; //port a as input
+  DDRT = 0xFF; //output port enable
   
   PORTB = 0xFF;
   
   
                         
-	EnableInterrupts;
+    EnableInterrupts;
 	
 	
 	
-	lightUpLED(temp, 1234);
+	//lightUpLED(temp, 1234);
 
   for(;;) {
+       if(delayFlag == 0){
+            
+       showValues(values, pointer);
     
-    //check numpad
-    if(counter == 0){
-      int value = checkNumpad();
-      
-        if(value != -1){
-          input[pointer++] = value;
-          //disable numpad for aproximately 20ms (debouncing)
-          counter = 8000;
-        }
-    }else{
-      counter--; 
-    }
-    
-    
-      
-    //show numbers on seven segment
-    showValues(input, pointer);
-    if(pointer == 4){
-    
-    //Check if matches
-      lightUpLED(input, 6969);
-      pointer = 0;
-      input[0] = -1;
-      input[1] = -1;
-      input[2] = -1;
-      input[3] = -1;
-    }
-    //if 4 numbers entered 
-    //check to see if match
-    //if works
-    //LED -> green
-    //else
-    //Buzzer + LED -> RED
-    //if 3 attemps -> ALL LEDS RED
-    
-    
-  } /* loop forever */
-  /* please make sure that you never leave main */
-}
+          if((PORTA & 1) == 0x01){
+            //Button pushed               ;
+            unsigned char input = PTH;
+            int value = decodeValue(input);
 
-/* Function which checks whether the number inputted in the numpad is correct
-   IF the number is correct, it loads 01 into the register A
-   If the number is incorrect, it loads 00, 
-   The asm function will then light up the RGB LED with the correct colour
-*/
+            if(value != -1){
+                values[pointer++]=value;
+                
+                for(delayIndex = 0; delayIndex < 200; delayIndex++)
+                  delay1ms();
+            }
+          }
+            
+          showValues(values, pointer);
+              
+          if(pointer == 4){
+              int result = checkCode(values, 1234);
+              
+              showValues(values, pointer);
+              
+              
+              if(result == 1){
+                  showYes();
+                  badCounter = 0;
+              }else{
+                  showNo();
+                  badCounter++;
+                  if(badCounter == 3){
+                        //LEDs all on and stalls
+                        PORTB = 0xAA;
+                        PTP = 0x0F;
+                        setupBradsSpecialFancySuperDeluxSaucyDelayWhosFunctionNameWillNeedToBeChangedSoon();
+                        badCounter = 0;
+                  }else{
+                        
+                  }
+              }
+
+              pointer = 0;
+              values[0] = -1;
+              values[1] = -1;
+              values[2] = -1;
+              values[3] = -1;
+              
+          }
+            
+      } 
+  }
+ 
+     //check numpad
+//    if(counter == 0){
+//      int value = checkNumpad();
+      
+//        if(value != -1){
+//          input[pointer++] = value;
+          //disable numpad for aproximately 20ms (debouncing)
+///          counter = 8000;
+//        }
+//    }else{
+//      counter--; 
+}
+    
+    
